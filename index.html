@@ -367,12 +367,26 @@
     <button id="admin-trigger" onclick="openAdmin()">Admin</button>
 
     <div id="admin-panel">
-        <div class="container" style="max-width: 600px;">
+        <div class="container" style="max-width: 800px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-                <h2>Live Results</h2>
+                <h2>Admin Dashboard</h2>
                 <button onclick="closeAdmin()" class="vote-btn" style="width: auto;">Close</button>
             </div>
-            <div id="results-list"></div>
+            
+            <div id="admin-tabs" style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <button onclick="showAdminTab('standings')" class="vote-btn" style="background: #333;">Standings</button>
+                <button onclick="showAdminTab('users-list')" class="vote-btn" style="background: #333;">Users & Votes</button>
+            </div>
+
+            <div id="admin-standings">
+                <h3>Live Standings</h3>
+                <div id="results-list"></div>
+            </div>
+
+            <div id="admin-users-list" style="display: none;">
+                <h3>User Activity</h3>
+                <div id="users-detail-list"></div>
+            </div>
         </div>
     </div>
 
@@ -491,15 +505,17 @@
             }
         };
 
-        function restoreSession() {
+        window.restoreSession = function() {
+            const uid = localStorage.getItem('eurovision_uid');
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('voting-screen').style.display = 'block';
             document.getElementById('welcome-msg').textContent = `Welcome back, ${userName}!`;
             
-            // Update presence in Firebase
-            const userRef = push(ref(db, 'users'));
-            set(userRef, userName);
-            onDisconnect(userRef).remove();
+            if (uid) {
+                const userRef = ref(db, `users/${uid}`);
+                set(userRef, userName);
+                onDisconnect(userRef).remove();
+            }
 
             updatePointsHeader();
             window.renderCountries();
@@ -510,10 +526,19 @@
             userName = input.value.trim();
             if (userName.length < 2) return alert("Please enter your name!");
             
+            let uid = localStorage.getItem('eurovision_uid');
+            if (!uid) {
+                uid = 'u' + Date.now();
+                localStorage.setItem('eurovision_uid', uid);
+            }
+            
             localStorage.setItem('eurovision_name', userName);
             
-            // Save user to Firebase and remove on disconnect
-            const userRef = push(ref(db, 'users'));
+            // Save user info
+            set(ref(db, `user_votes/${uid}/name`), userName);
+
+            // Active user presence
+            const userRef = ref(db, `users/${uid}`);
             set(userRef, userName);
             onDisconnect(userRef).remove();
 
@@ -551,25 +576,21 @@
         window.removeVote = function(cid) {
             const p = myVotes[cid];
             if (!p) return;
+            const uid = localStorage.getItem('eurovision_uid');
 
-            console.log(`Removing vote: ${p} points from ${cid}`);
-            const voteRef = ref(db, 'votes/' + cid);
-            
-            runTransaction(voteRef, (curr) => {
-                if (curr === null) return 0;
-                return Math.max(0, curr - p);
-            }).then(() => {
+            // Subtract from total
+            const totalRef = ref(db, 'votes/' + cid);
+            runTransaction(totalRef, (curr) => Math.max(0, (curr || 0) - p));
+
+            // Remove from user record
+            set(ref(db, `user_votes/${uid}/votes/${cid}`), null).then(() => {
                 delete myVotes[cid];
                 localStorage.setItem('eurovision_votes', JSON.stringify(myVotes));
                 availablePoints.push(p);
                 availablePoints.sort((a, b) => a - b);
-                
                 window.renderCountries();
                 updatePointsHeader();
-                showToast(`Removed ${p} points from ${countries.find(c => c.id === cid).name}`);
-            }).catch(err => {
-                console.error("Firebase error during removal:", err);
-                alert("Could not remove vote: " + err.message);
+                showToast(`Removed ${p} points.`);
             });
         }
 
@@ -597,9 +618,15 @@
 
         window.submitVote = function(p) {
             const cid = selectedCountry;
-            console.log(`Trying to vote: ${p} points to ${cid}`);
-            const voteRef = ref(db, 'votes/' + cid);
-            runTransaction(voteRef, (curr) => (curr || 0) + p).then(() => {
+            const uid = localStorage.getItem('eurovision_uid');
+            
+            // Track total standings
+            const totalVoteRef = ref(db, 'votes/' + cid);
+            runTransaction(totalVoteRef, (curr) => (curr || 0) + p);
+
+            // Track individual user vote
+            const userVoteRef = ref(db, `user_votes/${uid}/votes/${cid}`);
+            set(userVoteRef, p).then(() => {
                 myVotes[cid] = p;
                 localStorage.setItem('eurovision_votes', JSON.stringify(myVotes));
                 availablePoints = availablePoints.filter(val => val !== p);
@@ -607,13 +634,6 @@
                 window.renderCountries();
                 updatePointsHeader();
                 showToast(`Gave ${p} points to ${countries.find(c => c.id === cid).name}!`);
-            }).catch(err => {
-                console.error("Firebase error during voting:", err);
-                if (err.message.includes("permission_denied")) {
-                    alert("Access denied! You must change 'Rules' in Firebase Console to public (read/write: true).");
-                } else {
-                    alert("Could not save vote: " + err.message);
-                }
             });
         }
 
@@ -627,17 +647,26 @@
             }
         }
 
+        window.showAdminTab = function(tabId) {
+            document.getElementById('admin-standings').style.display = tabId === 'standings' ? 'block' : 'none';
+            document.getElementById('admin-users-list').style.display = tabId === 'users-list' ? 'block' : 'none';
+        }
+
         window.openAdmin = () => {
             const pass = prompt("Passcode:");
             if (pass === "stek1337") {
                 document.getElementById('admin-panel').style.display = 'block';
-                console.log("Admin opened, fetching data...");
+                
+                // Standings listener
                 onValue(ref(db, 'votes'), (snap) => {
                     const data = snap.val() || {};
-                    console.log("Data received for admin:", data);
                     renderResults(data);
-                }, (err) => {
-                    console.error("Admin onValue error:", err);
+                });
+
+                // User details listener
+                onValue(ref(db, 'user_votes'), (snap) => {
+                    const data = snap.val() || {};
+                    renderAdminUsers(data);
                 });
             } else if (pass !== null) {
                 alert("Wrong passcode!");
@@ -645,6 +674,64 @@
         };
 
         window.closeAdmin = () => document.getElementById('admin-panel').style.display = 'none';
+
+        function renderAdminUsers(userVotes) {
+            const container = document.getElementById('users-detail-list');
+            container.innerHTML = '';
+            
+            const entries = Object.entries(userVotes);
+            if (entries.length === 0) {
+                container.innerHTML = '<p style="text-align:center; padding: 20px; opacity: 0.5;">No user data found.</p>';
+                return;
+            }
+
+            entries.forEach(([uid, userData]) => {
+                const userBox = document.createElement('div');
+                userBox.className = 'result-item';
+                userBox.style.flexDirection = 'column';
+                userBox.style.alignItems = 'flex-start';
+                
+                const votesText = Object.entries(userData.votes || {})
+                    .map(([cid, p]) => `${countries.find(c => c.id === cid)?.flag || cid}: ${p}p`)
+                    .join(', ') || 'No votes cast';
+
+                userBox.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; width: 100%; margin-bottom: 10px;">
+                        <span style="font-weight: 800; font-size: 1.1rem;">👤 ${userData.name}</span>
+                        <button onclick="window.removeAdminUser('${uid}')" style="background: var(--secondary); border: none; color: white; padding: 5px 10px; border-radius: 8px; cursor: pointer; font-size: 0.8rem;">Delete User</button>
+                    </div>
+                    <div style="font-size: 0.85rem; opacity: 0.8; line-height: 1.4;">${votesText}</div>
+                `;
+                container.appendChild(userBox);
+            });
+        }
+
+        window.removeAdminUser = async function(uid) {
+            if (!confirm("Are you sure? This will delete the user and ALL their votes.")) return;
+            
+            try {
+                // 1. Get user's votes first
+                const userVotesRef = ref(db, `user_votes/${uid}/votes`);
+                onValue(userVotesRef, async (snap) => {
+                    const userVotes = snap.val() || {};
+                    
+                    // 2. Subtract each vote from total standings
+                    for (const [cid, p] of Object.entries(userVotes)) {
+                        const totalRef = ref(db, `votes/${cid}`);
+                        await runTransaction(totalRef, (curr) => Math.max(0, (curr || 0) - p));
+                    }
+
+                    // 3. Delete user records
+                    await set(ref(db, `user_votes/${uid}`), null);
+                    await set(ref(db, `users/${uid}`), null);
+
+                    showToast("User and votes removed.");
+                }, { onlyOnce: true });
+            } catch (err) {
+                console.error("Delete failed:", err);
+                alert("Error deleting user.");
+            }
+        }
 
         function renderResults(votes) {
             const list = document.getElementById('results-list');
