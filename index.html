@@ -383,7 +383,7 @@
             });
         }
 
-        function openPoints(id) {
+        window.openPoints = function(id) {
             selectedCountry = id;
             const country = countries.find(c => c.id === id);
             document.getElementById('modal-title').textContent = `Hur många poäng till ${country.name}?`;
@@ -394,7 +394,7 @@
                 btn.className = 'point-btn';
                 btn.textContent = p;
                 if (!availablePoints.includes(p)) btn.disabled = true;
-                btn.onclick = () => submitVote(p);
+                btn.onclick = () => window.submitVote(p);
                 pGrid.appendChild(btn);
             });
             document.getElementById('points-overlay').style.display = 'flex';
@@ -402,16 +402,19 @@
 
         window.closeOverlay = () => document.getElementById('points-overlay').style.display = 'none';
 
-        function submitVote(p) {
+        window.submitVote = function(p) {
             const cid = selectedCountry;
             const voteRef = ref(db, 'votes/' + cid);
             runTransaction(voteRef, (curr) => (curr || 0) + p).then(() => {
                 myVotes[cid] = p;
                 availablePoints = availablePoints.filter(val => val !== p);
-                closeOverlay();
+                window.closeOverlay();
                 renderCountries();
                 updatePointsHeader();
                 showToast(`Gav ${p} poäng till ${countries.find(c => c.id === cid).name}!`);
+            }).catch(err => {
+                console.error("Firebase error:", err);
+                alert("Kunde inte spara röst. Kontrollera internetanslutningen.");
             });
         }
 
