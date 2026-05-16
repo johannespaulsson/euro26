@@ -323,7 +323,16 @@
         console.log("Ansluter till Firebase...");
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        console.log("Firebase initierad!");
+        console.log("Firebase initierad! Database URL:", firebaseConfig.databaseURL);
+
+        // Testanslutning
+        onValue(ref(db, '.info/connected'), (snap) => {
+            if (snap.val() === true) {
+                console.log("Ansluten till Firebase Realtime Database!");
+            } else {
+                console.warn("Ej ansluten till Firebase (offline eller blockerat).");
+            }
+        });
 
         const countries = [
             { id: "AL", name: "Albanien", flag: "🇦🇱" }, { id: "AM", name: "Armenien", flag: "🇦🇲" },
