@@ -103,6 +103,52 @@
             min-height: 30px;
         }
 
+        /* Leaderboard Styling */
+        #top-leaderboard {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            perspective: 1000px;
+        }
+
+        .top-spot {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            min-width: 100px;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            transition: transform 0.3s;
+        }
+
+        .top-spot:nth-child(2) { transform: scale(1.15); border-color: var(--accent); background: rgba(255, 215, 0, 0.1); } /* Gold */
+        .top-spot:nth-child(1) { margin-top: 10px; } /* Silver */
+        .top-spot:nth-child(3) { margin-top: 10px; } /* Bronze */
+
+        .spot-rank {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            font-size: 0.8rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .top-spot:nth-child(2) .spot-rank { background: var(--accent); color: #000; }
+
+        .spot-flag { font-size: 2rem; display: block; }
+        .spot-name { font-size: 0.8rem; font-weight: 700; display: block; margin: 5px 0; }
+        .spot-points { font-size: 1.1rem; font-weight: 800; color: var(--accent); }
+
         .user-pill {
             background: rgba(255, 255, 255, 0.1);
             padding: 4px 12px;
@@ -298,6 +344,9 @@
     <div id="voting-screen" style="display: none;">
         <header>
             <h1 id="welcome-msg">Eurovision 2026</h1>
+            
+            <div id="top-leaderboard"></div>
+
             <div id="active-users"></div>
             <p id="points-left">Loading points...</p>
         </header>
@@ -359,7 +408,7 @@
             }
         });
 
-        // Lyssna på aktiva användare
+        // Listen for active users
         onValue(ref(db, 'users'), (snap) => {
             const users = snap.val() || {};
             const container = document.getElementById('active-users');
@@ -369,6 +418,39 @@
                 pill.className = 'user-pill';
                 pill.textContent = `👤 ${name}`;
                 container.appendChild(pill);
+            });
+        });
+
+        // Listen for all votes to update Top 3 Leaderboard
+        onValue(ref(db, 'votes'), (snap) => {
+            const votes = snap.val() || {};
+            const sorted = countries
+                .map(c => ({...c, score: votes[c.id] || 0}))
+                .sort((a,b) => b.score - a.score);
+            
+            const top3 = sorted.slice(0, 3);
+            const container = document.getElementById('top-leaderboard');
+            
+            if (top3.every(c => c.score === 0)) {
+                container.innerHTML = '';
+                return;
+            }
+
+            // Reorder to 2nd, 1st, 3rd for podium layout
+            const podium = [top3[1], top3[0], top3[2]];
+            container.innerHTML = '';
+            podium.forEach((c, i) => {
+                if (!c) return;
+                const spot = document.createElement('div');
+                spot.className = 'top-spot';
+                const rank = i === 0 ? 2 : (i === 1 ? 1 : 3);
+                spot.innerHTML = `
+                    <div class="spot-rank">${rank}</div>
+                    <span class="spot-flag">${c.flag}</span>
+                    <span class="spot-name">${c.name}</span>
+                    <span class="spot-points">${c.score}p</span>
+                `;
+                container.appendChild(spot);
             });
         });
 
