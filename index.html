@@ -472,24 +472,38 @@
         });
 
         const countries = [
-            { id: "AL", name: "Albania", flag: "🇦🇱" }, { id: "AM", name: "Armenia", flag: "🇦🇲" },
-            { id: "AU", name: "Australia", flag: "🇦🇺" }, { id: "AT", name: "Austria", flag: "🇦🇹" },
-            { id: "AZ", name: "Azerbaijan", flag: "🇦🇿" }, { id: "BE", name: "Belgium", flag: "🇧🇪" },
-            { id: "BG", name: "Bulgaria", flag: "🇧🇬" }, { id: "HR", name: "Croatia", flag: "🇭🇷" },
-            { id: "CY", name: "Cyprus", flag: "🇨🇾" }, { id: "CZ", name: "Czech Republic", flag: "🇨🇿" },
-            { id: "DK", name: "Denmark", flag: "🇩🇰" }, { id: "EE", name: "Estonia", flag: "🇪🇪" },
-            { id: "FI", name: "Finland", flag: "🇫🇮" }, { id: "FR", name: "France", flag: "🇫🇷" },
-            { id: "GE", name: "Georgia", flag: "🇬🇪" }, { id: "DE", name: "Germany", flag: "🇩🇪" },
-            { id: "GR", name: "Greece", flag: "🇬🇷" }, { id: "IL", name: "Israel", flag: "🇮🇱" },
-            { id: "IT", name: "Italy", flag: "🇮🇹" }, { id: "LV", name: "Latvia", flag: "🇱🇻" },
-            { id: "LT", name: "Lithuania", flag: "🇱🇹" }, { id: "LU", name: "Luxembourg", flag: "🇱🇺" },
-            { id: "MT", name: "Malta", flag: "🇲🇹" }, { id: "MD", name: "Moldova", flag: "🇲🇩" },
-            { id: "ME", name: "Montenegro", flag: "🇲🇪" }, { id: "NO", name: "Norway", flag: "🇳🇴" },
-            { id: "PL", name: "Poland", flag: "🇵🇱" }, { id: "PT", name: "Portugal", flag: "🇵🇹" },
-            { id: "RO", name: "Romania", flag: "🇷🇴" }, { id: "SM", name: "San Marino", flag: "🇸🇲" },
-            { id: "RS", name: "Serbia", flag: "🇷🇸" }, { id: "SE", name: "Sweden", flag: "🇸🇪" },
-            { id: "CH", name: "Switzerland", flag: "🇨🇭" }, { id: "UA", name: "Ukraine", flag: "🇺🇦" },
-            { id: "GB", name: "United Kingdom", flag: "🇬🇧" }
+            { id: "AL", name: "Albania", flag: "🇦🇱", artist: "Besa", song: "Titan" },
+            { id: "AM", name: "Armenia", flag: "🇦🇲", artist: "Ladaniva", song: "Jako" },
+            { id: "AU", name: "Australia", flag: "🇦🇺", artist: "Electric Fields", song: "One Milkali" },
+            { id: "AT", name: "Austria", flag: "🇦🇹", artist: "Kaleen", song: "We Will Rave" },
+            { id: "AZ", name: "Azerbaijan", flag: "🇦🇿", artist: "Fahree", song: "Özünlə Apar" },
+            { id: "BE", name: "Belgium", flag: "🇧🇪", artist: "Mustii", song: "Before the Party's Over" },
+            { id: "HR", name: "Croatia", flag: "🇭🇷", artist: "Baby Lasagna", song: "Rim Tim Tagi Dim" },
+            { id: "CY", name: "Cyprus", flag: "🇨🇾", artist: "Silia Kapsis", song: "Liar" },
+            { id: "CZ", name: "Czechia", flag: "🇨🇿", artist: "Aiko", song: "Pedestal" },
+            { id: "DK", name: "Denmark", flag: "🇩🇰", artist: "Saba", song: "Sand" },
+            { id: "EE", name: "Estonia", flag: "🇪🇪", artist: "5miinust & Puuluup", song: "(nendest) narkootikumidest..." },
+            { id: "FI", name: "Finland", flag: "🇫🇮", artist: "Windows95man", song: "No Rules!" },
+            { id: "FR", name: "France", flag: "🇫🇷", artist: "Slimane", song: "Mon Amour" },
+            { id: "GE", name: "Georgia", flag: "🇬🇪", artist: "Nutsa Buzaladze", song: "Firefighter" },
+            { id: "DE", name: "Germany", flag: "🇩🇪", artist: "Isaak", song: "Always on the Run" },
+            { id: "GR", name: "Greece", flag: "🇬🇷", artist: "Marina Satti", song: "Zari" },
+            { id: "IL", name: "Israel", flag: "🇮🇱", artist: "Eden Golan", song: "Hurricane" },
+            { id: "IT", name: "Italy", flag: "🇮🇹", artist: "Angelina Mango", song: "La Noia" },
+            { id: "LV", name: "Latvia", flag: "🇱🇻", artist: "Dons", song: "Hollow" },
+            { id: "LT", name: "Lithuania", flag: "🇱🇹", artist: "Silvester Belt", song: "Luktelk" },
+            { id: "LU", name: "Luxembourg", flag: "🇱🇺", artist: "Tali", song: "Fighter" },
+            { id: "MT", name: "Malta", flag: "🇲🇹", artist: "Sarah Bonnici", song: "Loop" },
+            { id: "MD", name: "Moldova", flag: "🇲🇩", artist: "Natalia Barbu", song: "In the Middle" },
+            { id: "NO", name: "Norway", flag: "🇳🇴", artist: "Gåte", song: "Ulveham" },
+            { id: "PL", name: "Poland", flag: "🇵🇱", artist: "Luna", song: "The Tower" },
+            { id: "PT", name: "Portugal", flag: "🇵🇹", artist: "Iolanda", song: "Grito" },
+            { id: "SM", name: "San Marino", flag: "🇸🇲", artist: "Megara", song: "11:11" },
+            { id: "RS", name: "Serbia", flag: "🇷🇸", artist: "Teya Dora", song: "Ramonda" },
+            { id: "SE", name: "Sweden", flag: "🇸🇪", artist: "Marcus & Martinus", song: "Unforgettable" },
+            { id: "CH", name: "Switzerland", flag: "🇨🇭", artist: "Nemo", song: "The Code" },
+            { id: "UA", name: "Ukraine", flag: "🇺🇦", artist: "Alyona Alyona & Jerry Heil", song: "Teresa & Maria" },
+            { id: "GB", name: "United Kingdom", flag: "🇬🇧", artist: "Olly Alexander", song: "Dizzy" }
         ];
 
         let userName = localStorage.getItem('eurovision_name') || "";
@@ -526,30 +540,60 @@
 
         window.startVoting = function() {
             const input = document.getElementById('user-name');
-            userName = input.value.trim();
-            if (userName.length < 2) return alert("Please enter your name!");
+            const name = input.value.trim();
+            if (name.length < 2) return alert("Please enter your name!");
             
-            let uid = localStorage.getItem('eurovision_uid');
-            if (!uid) {
-                uid = 'u' + Date.now();
-                localStorage.setItem('eurovision_uid', uid);
-            }
-            
-            localStorage.setItem('eurovision_name', userName);
-            
-            // Save user info
-            set(ref(db, `user_votes/${uid}/name`), userName);
+            // Check if user already exists in database (to restore session by name)
+            onValue(ref(db, 'user_votes'), (snap) => {
+                const allUserVotes = snap.val() || {};
+                let foundUid = null;
+                let foundVotes = {};
 
-            // Active user presence
-            const userRef = ref(db, `users/${uid}`);
-            set(userRef, userName);
-            onDisconnect(userRef).remove();
+                for (const [uid, data] of Object.entries(allUserVotes)) {
+                    if (data.name && data.name.toLowerCase() === name.toLowerCase()) {
+                        foundUid = uid;
+                        foundVotes = data.votes || {};
+                        break;
+                    }
+                }
 
-            document.getElementById('setup-screen').style.display = 'none';
-            document.getElementById('voting-screen').style.display = 'block';
-            document.getElementById('welcome-msg').textContent = `Go ${userName}!`;
-            updatePointsHeader();
-            window.renderCountries();
+                let currentUid;
+                if (foundUid) {
+                    // Restore existing session
+                    currentUid = foundUid;
+                    myVotes = foundVotes;
+                    showToast("Welcome back! Restoring your votes...");
+                } else {
+                    // Create new session
+                    currentUid = 'u' + Date.now();
+                    myVotes = {};
+                    set(ref(db, `user_votes/${currentUid}/name`), name);
+                }
+
+                // Update Local Storage
+                localStorage.setItem('eurovision_uid', currentUid);
+                localStorage.setItem('eurovision_name', name);
+                localStorage.setItem('eurovision_votes', JSON.stringify(myVotes));
+                
+                userName = name;
+                
+                // Recalculate available points
+                availablePoints = [1, 2, 3, 4, 5, 6, 7, 8, 10, 12];
+                Object.values(myVotes).forEach(p => {
+                    availablePoints = availablePoints.filter(val => val !== p);
+                });
+
+                // Active user presence
+                const userRef = ref(db, `users/${currentUid}`);
+                set(userRef, name);
+                onDisconnect(userRef).remove();
+
+                document.getElementById('setup-screen').style.display = 'none';
+                document.getElementById('voting-screen').style.display = 'block';
+                document.getElementById('welcome-msg').textContent = `Go ${name}!`;
+                updatePointsHeader();
+                window.renderCountries();
+            }, { onlyOnce: true });
         };
 
         window.logout = function() {
@@ -586,6 +630,7 @@
                     <span class="points-badge" id="badge-${c.id}">${hasVoted || ''}p</span>
                     <span class="flag">${c.flag}</span>
                     <span class="country-name">${c.name}</span>
+                    <span style="font-size: 0.75rem; opacity: 0.7; display: block; margin-bottom: 10px;">${c.artist} - "${c.song}"</span>
                     ${hasVoted 
                         ? `<button class="vote-btn" style="background: #444; margin-top: 5px;" onclick="event.stopPropagation(); window.removeVote('${c.id}')">Remove</button>` 
                         : `<button class="vote-btn">Give points</button>`}
@@ -599,31 +644,10 @@
             });
         }
 
-        window.removeVote = function(cid) {
-            const p = myVotes[cid];
-            if (!p) return;
-            const uid = localStorage.getItem('eurovision_uid');
-
-            // Subtract from total
-            const totalRef = ref(db, 'votes/' + cid);
-            runTransaction(totalRef, (curr) => Math.max(0, (curr || 0) - p));
-
-            // Remove from user record
-            set(ref(db, `user_votes/${uid}/votes/${cid}`), null).then(() => {
-                delete myVotes[cid];
-                localStorage.setItem('eurovision_votes', JSON.stringify(myVotes));
-                availablePoints.push(p);
-                availablePoints.sort((a, b) => a - b);
-                window.renderCountries();
-                updatePointsHeader();
-                showToast(`Removed ${p} points.`);
-            });
-        }
-
         window.openPoints = function(id) {
             selectedCountry = id;
             const country = countries.find(c => c.id === id);
-            document.getElementById('modal-title').textContent = `How many points to ${country.name}?`;
+            document.getElementById('modal-title').innerHTML = `How many points to ${country.name}?<br><small style="font-weight: 400; opacity: 0.7;">${country.artist} - "${country.song}"</small>`;
             const pGrid = document.getElementById('points-grid');
             pGrid.innerHTML = '';
             [1, 2, 3, 4, 5, 6, 7, 8, 10, 12].forEach(p => {
