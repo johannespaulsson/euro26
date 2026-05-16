@@ -175,6 +175,55 @@
             margin-top: 10px;
         }
 
+        /* Comment Wall Styling */
+        #comment-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        #comment-display {
+            height: 200px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-right: 10px;
+            text-align: left;
+        }
+
+        .comment-bubble {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 15px;
+            border-radius: 15px;
+            border-bottom-left-radius: 2px;
+            font-size: 0.9rem;
+            max-width: 90%;
+            align-self: flex-start;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .comment-bubble b { color: var(--accent); margin-right: 5px; }
+        .comment-time { font-size: 0.7rem; opacity: 0.5; margin-left: 10px; }
+
+        .comment-input-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        .comment-input-area input {
+            flex-grow: 1;
+            background: #000;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 12px;
+            border-radius: 12px;
+            outline: none;
+        }
+
         .container {
             max-width: 1100px;
             margin: 0 auto;
@@ -355,6 +404,15 @@
         </header>
 
         <div class="container">
+            <!-- Comment Wall -->
+            <div id="comment-section">
+                <div id="comment-display"></div>
+                <div class="comment-input-area">
+                    <input type="text" id="comment-input" placeholder="Write a comment..." maxlength="100">
+                    <button onclick="window.sendComment()" class="vote-btn" style="width: auto; padding: 0 20px;">Send</button>
+                </div>
+            </div>
+
             <div class="grid" id="country-grid"></div>
         </div>
     </div>
@@ -470,6 +528,37 @@
                 `;
                 container.appendChild(spot);
             });
+        });
+
+        // Live Comment Wall Logic
+        window.sendComment = function() {
+            const input = document.getElementById('comment-input');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            const commentRef = push(ref(db, 'comments'));
+            set(commentRef, {
+                name: userName,
+                text: msg,
+                timestamp: Date.now()
+            });
+            input.value = '';
+        };
+
+        // Listen for new comments
+        onValue(ref(db, 'comments'), (snap) => {
+            const comments = snap.val() || {};
+            const display = document.getElementById('comment-display');
+            display.innerHTML = '';
+            
+            Object.values(comments).sort((a,b) => a.timestamp - b.timestamp).forEach(c => {
+                const bubble = document.createElement('div');
+                bubble.className = 'comment-bubble';
+                const time = new Date(c.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                bubble.innerHTML = `<b>${c.name}:</b> ${c.text} <span class="comment-time">${time}</span>`;
+                display.appendChild(bubble);
+            });
+            display.scrollTop = display.scrollHeight;
         });
 
         const countries = [
@@ -621,6 +710,7 @@
                 await set(ref(db, 'votes'), null);
                 await set(ref(db, 'user_votes'), null);
                 await set(ref(db, 'users'), null);
+                await set(ref(db, 'comments'), null);
                 
                 // Clear local session as well
                 localStorage.removeItem('eurovision_name');
