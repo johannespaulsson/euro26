@@ -427,7 +427,11 @@
                 showToast(`Gav ${p} poäng till ${countries.find(c => c.id === cid).name}!`);
             }).catch(err => {
                 console.error("Firebase error vid röstning:", err);
-                alert("Kunde inte spara röst: " + err.message);
+                if (err.message.includes("permission_denied")) {
+                    alert("Åtkomst nekad! Du måste ändra 'Rules' i Firebase Console till public (read/write: true).");
+                } else {
+                    alert("Kunde inte spara röst: " + err.message);
+                }
             });
         }
 
