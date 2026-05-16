@@ -448,18 +448,46 @@
             countries.forEach(c => {
                 const card = document.createElement('div');
                 card.className = 'card';
+                const hasVoted = myVotes[c.id];
                 card.innerHTML = `
-                    <span class="points-badge" id="badge-${c.id}">${myVotes[c.id] || ''}p</span>
+                    <span class="points-badge" id="badge-${c.id}">${hasVoted || ''}p</span>
                     <span class="flag">${c.flag}</span>
                     <span class="country-name">${c.name}</span>
-                    ${myVotes[c.id] ? '' : `<button class="vote-btn">Give points</button>`}
+                    ${hasVoted 
+                        ? `<button class="vote-btn" style="background: #444; margin-top: 5px;" onclick="event.stopPropagation(); window.removeVote('${c.id}')">Remove</button>` 
+                        : `<button class="vote-btn">Give points</button>`}
                 `;
-                if (myVotes[c.id]) {
+                if (hasVoted) {
                     card.querySelector('.points-badge').style.display = 'block';
                     card.style.borderColor = 'var(--accent)';
                 }
                 card.onclick = () => { if (!myVotes[c.id]) window.openPoints(c.id); };
                 grid.appendChild(card);
+            });
+        }
+
+        window.removeVote = function(cid) {
+            const p = myVotes[cid];
+            if (!p) return;
+
+            console.log(`Removing vote: ${p} points from ${cid}`);
+            const voteRef = ref(db, 'votes/' + cid);
+            
+            runTransaction(voteRef, (curr) => {
+                if (curr === null) return 0;
+                return Math.max(0, curr - p);
+            }).then(() => {
+                delete myVotes[cid];
+                localStorage.setItem('eurovision_votes', JSON.stringify(myVotes));
+                availablePoints.push(p);
+                availablePoints.sort((a, b) => a - b);
+                
+                window.renderCountries();
+                updatePointsHeader();
+                showToast(`Removed ${p} points from ${countries.find(c => c.id === cid).name}`);
+            }).catch(err => {
+                console.error("Firebase error during removal:", err);
+                alert("Could not remove vote: " + err.message);
             });
         }
 
