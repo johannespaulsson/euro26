@@ -660,6 +660,27 @@
             });
         }
 
+        window.removeVote = function(cid) {
+            const p = myVotes[cid];
+            if (!p) return;
+            const uid = localStorage.getItem('eurovision_uid');
+
+            // Subtract from total
+            const totalRef = ref(db, 'votes/' + cid);
+            runTransaction(totalRef, (curr) => Math.max(0, (curr || 0) - p));
+
+            // Remove from user record
+            set(ref(db, `user_votes/${uid}/votes/${cid}`), null).then(() => {
+                delete myVotes[cid];
+                localStorage.setItem('eurovision_votes', JSON.stringify(myVotes));
+                availablePoints.push(p);
+                availablePoints.sort((a, b) => a - b);
+                window.renderCountries();
+                updatePointsHeader();
+                showToast(`Removed ${p} points.`);
+            });
+        }
+
         window.openPoints = function(id) {
             selectedCountry = id;
             const country = countries.find(c => c.id === id);
