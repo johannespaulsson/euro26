@@ -362,7 +362,7 @@
             renderCountries();
         };
 
-        function renderCountries() {
+        window.renderCountries = function() {
             const grid = document.getElementById('country-grid');
             grid.innerHTML = '';
             countries.forEach(c => {
@@ -378,7 +378,7 @@
                     card.querySelector('.points-badge').style.display = 'block';
                     card.style.borderColor = 'var(--accent)';
                 }
-                card.onclick = () => { if (!myVotes[c.id]) openPoints(c.id); };
+                card.onclick = () => { if (!myVotes[c.id]) window.openPoints(c.id); };
                 grid.appendChild(card);
             });
         }
@@ -394,7 +394,10 @@
                 btn.className = 'point-btn';
                 btn.textContent = p;
                 if (!availablePoints.includes(p)) btn.disabled = true;
-                btn.onclick = () => window.submitVote(p);
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    window.submitVote(p);
+                };
                 pGrid.appendChild(btn);
             });
             document.getElementById('points-overlay').style.display = 'flex';
@@ -404,17 +407,18 @@
 
         window.submitVote = function(p) {
             const cid = selectedCountry;
+            console.log(`Försöker rösta: ${p} poäng på ${cid}`);
             const voteRef = ref(db, 'votes/' + cid);
             runTransaction(voteRef, (curr) => (curr || 0) + p).then(() => {
                 myVotes[cid] = p;
                 availablePoints = availablePoints.filter(val => val !== p);
                 window.closeOverlay();
-                renderCountries();
+                window.renderCountries();
                 updatePointsHeader();
                 showToast(`Gav ${p} poäng till ${countries.find(c => c.id === cid).name}!`);
             }).catch(err => {
-                console.error("Firebase error:", err);
-                alert("Kunde inte spara röst. Kontrollera internetanslutningen.");
+                console.error("Firebase error vid röstning:", err);
+                alert("Kunde inte spara röst: " + err.message);
             });
         }
 
@@ -429,9 +433,19 @@
         }
 
         window.openAdmin = () => {
-            if (prompt("Kod:") === "stek1337") {
+            const pass = prompt("Kod:");
+            if (pass === "stek1337") {
                 document.getElementById('admin-panel').style.display = 'block';
-                onValue(ref(db, 'votes'), (snap) => renderResults(snap.val() || {}));
+                console.log("Admin öppnad, hämtar data...");
+                onValue(ref(db, 'votes'), (snap) => {
+                    const data = snap.val() || {};
+                    console.log("Data mottagen till admin:", data);
+                    renderResults(data);
+                }, (err) => {
+                    console.error("Admin onValue error:", err);
+                });
+            } else if (pass !== null) {
+                alert("Fel kod!");
             }
         };
 
@@ -441,6 +455,12 @@
             const list = document.getElementById('results-list');
             list.innerHTML = '';
             const sorted = countries.map(c => ({...c, score: votes[c.id] || 0})).sort((a,b) => b.score - a.score);
+            
+            if (sorted.every(s => s.score === 0)) {
+                list.innerHTML = '<p style="text-align:center; padding: 20px; opacity: 0.5;">Inga röster har kommit in än.</p>';
+                return;
+            }
+
             const max = Math.max(...sorted.map(s => s.score), 1);
             sorted.forEach((item, i) => {
                 const row = document.createElement('div');
