@@ -343,9 +343,12 @@
 
     <div id="voting-screen" style="display: none;">
         <header>
-            <h1 id="welcome-msg">Eurovision 2026</h1>
+            <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1100px; margin: 0 auto;">
+                <h1 id="welcome-msg" style="margin: 0; text-align: left;">Eurovision 2026</h1>
+                <button onclick="window.logout()" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 15px; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 0.8rem;">Log Out</button>
+            </div>
             
-            <div id="top-leaderboard"></div>
+            <div id="top-leaderboard" style="margin-top: 20px;"></div>
 
             <div id="active-users"></div>
             <p id="points-left">Loading points...</p>
@@ -547,6 +550,29 @@
             document.getElementById('welcome-msg').textContent = `Go ${userName}!`;
             updatePointsHeader();
             window.renderCountries();
+        };
+
+        window.logout = function() {
+            if (!confirm("Are you sure you want to log out? Your votes will remain in the database.")) return;
+            
+            const uid = localStorage.getItem('eurovision_uid');
+            if (uid) {
+                set(ref(db, `users/${uid}`), null);
+            }
+
+            localStorage.removeItem('eurovision_name');
+            localStorage.removeItem('eurovision_votes');
+            localStorage.removeItem('eurovision_uid');
+
+            userName = "";
+            myVotes = {};
+            availablePoints = [1, 2, 3, 4, 5, 6, 7, 8, 10, 12];
+
+            document.getElementById('voting-screen').style.display = 'none';
+            document.getElementById('setup-screen').style.display = 'flex';
+            document.getElementById('user-name').value = '';
+            
+            showToast("Logged out successfully.");
         };
 
         window.renderCountries = function() {
