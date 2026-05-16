@@ -393,15 +393,42 @@
             { id: "GB", name: "Storbritannien", flag: "🇬🇧" }
         ];
 
-        let userName = "";
+        let userName = localStorage.getItem('eurovision_name') || "";
         let availablePoints = [1, 2, 3, 4, 5, 6, 7, 8, 10, 12];
-        let myVotes = {};
+        let myVotes = JSON.parse(localStorage.getItem('eurovision_votes')) || {};
         let selectedCountry = null;
+
+        // Räkna ut tillgängliga poäng baserat på sparade röster
+        Object.values(myVotes).forEach(p => {
+            availablePoints = availablePoints.filter(val => val !== p);
+        });
+
+        window.onload = function() {
+            if (userName) {
+                restoreSession();
+            }
+        };
+
+        function restoreSession() {
+            document.getElementById('setup-screen').style.display = 'none';
+            document.getElementById('voting-screen').style.display = 'block';
+            document.getElementById('welcome-msg').textContent = `Välkommen tillbaka, ${userName}!`;
+            
+            // Uppdatera närvaro i Firebase
+            const userRef = push(ref(db, 'users'));
+            set(userRef, userName);
+            onDisconnect(userRef).remove();
+
+            updatePointsHeader();
+            window.renderCountries();
+        }
 
         window.startVoting = function() {
             const input = document.getElementById('user-name');
             userName = input.value.trim();
             if (userName.length < 2) return alert("Skriv ditt namn!");
+            
+            localStorage.setItem('eurovision_name', userName);
             
             // Spara användaren i Firebase och ta bort vid utloggning
             const userRef = push(ref(db, 'users'));
@@ -412,7 +439,7 @@
             document.getElementById('voting-screen').style.display = 'block';
             document.getElementById('welcome-msg').textContent = `Heja ${userName}!`;
             updatePointsHeader();
-            renderCountries();
+            window.renderCountries();
         };
 
         window.renderCountries = function() {
@@ -464,6 +491,7 @@
             const voteRef = ref(db, 'votes/' + cid);
             runTransaction(voteRef, (curr) => (curr || 0) + p).then(() => {
                 myVotes[cid] = p;
+                localStorage.setItem('eurovision_votes', JSON.stringify(myVotes));
                 availablePoints = availablePoints.filter(val => val !== p);
                 window.closeOverlay();
                 window.renderCountries();
