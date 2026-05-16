@@ -379,6 +379,7 @@
             <div id="admin-tabs" style="display: flex; gap: 10px; margin-bottom: 20px;">
                 <button onclick="showAdminTab('standings')" class="vote-btn" style="background: #333;">Standings</button>
                 <button onclick="showAdminTab('users-list')" class="vote-btn" style="background: #333;">Users & Votes</button>
+                <button onclick="window.resetDatabase()" class="vote-btn" style="background: var(--secondary); margin-left: auto; width: auto;">Reset All Data</button>
             </div>
 
             <div id="admin-standings">
@@ -610,6 +611,28 @@
             document.getElementById('user-name').value = '';
             
             showToast("Logged out successfully.");
+        };
+
+        window.resetDatabase = async function() {
+            if (!confirm("⚠️ WARNING: This will delete ALL votes and ALL users from the database. This cannot be undone.")) return;
+            if (!confirm("Are you REALLY sure you want to clear EVERYTHING?")) return;
+
+            try {
+                await set(ref(db, 'votes'), null);
+                await set(ref(db, 'user_votes'), null);
+                await set(ref(db, 'users'), null);
+                
+                // Clear local session as well
+                localStorage.removeItem('eurovision_name');
+                localStorage.removeItem('eurovision_votes');
+                localStorage.removeItem('eurovision_uid');
+                
+                showToast("Database successfully cleared! All data reset.");
+                setTimeout(() => location.reload(), 2000);
+            } catch (err) {
+                console.error("Reset failed:", err);
+                alert("Error resetting database: " + err.message);
+            }
         };
 
         window.renderCountries = function() {
