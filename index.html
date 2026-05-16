@@ -94,6 +94,30 @@
             margin-bottom: 5px;
         }
 
+        #active-users {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+            min-height: 30px;
+        }
+
+        .user-pill {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         #points-left {
             background: rgba(255,255,255,0.1);
             display: inline-block;
@@ -274,6 +298,7 @@
     <div id="voting-screen" style="display: none;">
         <header>
             <h1 id="welcome-msg">Eurovision 2026</h1>
+            <div id="active-users"></div>
             <p id="points-left">Laddar poäng...</p>
         </header>
 
@@ -306,7 +331,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, runTransaction, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, runTransaction, onValue, set, push, onDisconnect } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         // --- DIN FIREBASE KONFIGURATION ---
         const firebaseConfig = {
@@ -332,6 +357,19 @@
             } else {
                 console.warn("Ej ansluten till Firebase (offline eller blockerat).");
             }
+        });
+
+        // Lyssna på aktiva användare
+        onValue(ref(db, 'users'), (snap) => {
+            const users = snap.val() || {};
+            const container = document.getElementById('active-users');
+            container.innerHTML = '';
+            Object.values(users).forEach(name => {
+                const pill = document.createElement('span');
+                pill.className = 'user-pill';
+                pill.textContent = `👤 ${name}`;
+                container.appendChild(pill);
+            });
         });
 
         const countries = [
@@ -364,6 +402,12 @@
             const input = document.getElementById('user-name');
             userName = input.value.trim();
             if (userName.length < 2) return alert("Skriv ditt namn!");
+            
+            // Spara användaren i Firebase och ta bort vid utloggning
+            const userRef = push(ref(db, 'users'));
+            set(userRef, userName);
+            onDisconnect(userRef).remove();
+
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('voting-screen').style.display = 'block';
             document.getElementById('welcome-msg').textContent = `Heja ${userName}!`;
