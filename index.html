@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="sv">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eurovision 2026 - Röstning</title>
+    <title>Eurovision 2026 - Voting</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
@@ -289,9 +289,9 @@
     <div id="setup-screen">
         <div class="setup-content">
             <h2>Eurovision 2026</h2>
-            <p>Vem vinner i Wien? Skriv ditt namn för att börja rösta.</p>
-            <input type="text" id="user-name" placeholder="Ditt namn..." autofocus>
-            <button onclick="startVoting()" class="vote-btn">Häng med!</button>
+            <p>Who wins in Vienna? Enter your name to start voting.</p>
+            <input type="text" id="user-name" placeholder="Your name..." autofocus>
+            <button onclick="startVoting()" class="vote-btn">Join the Party!</button>
         </div>
     </div>
 
@@ -299,7 +299,7 @@
         <header>
             <h1 id="welcome-msg">Eurovision 2026</h1>
             <div id="active-users"></div>
-            <p id="points-left">Laddar poäng...</p>
+            <p id="points-left">Loading points...</p>
         </header>
 
         <div class="container">
@@ -309,9 +309,9 @@
 
     <div id="points-overlay" class="points-overlay">
         <div class="points-modal">
-            <h3 id="modal-title">Ge poäng till...</h3>
+            <h3 id="modal-title">Give points to...</h3>
             <div class="points-grid" id="points-grid"></div>
-            <button onclick="closeOverlay()" class="vote-btn" style="margin-top: 20px; background: #444;">Avbryt</button>
+            <button onclick="closeOverlay()" class="vote-btn" style="margin-top: 20px; background: #444;">Cancel</button>
         </div>
     </div>
 
@@ -320,8 +320,8 @@
     <div id="admin-panel">
         <div class="container" style="max-width: 600px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-                <h2>Live-resultat</h2>
-                <button onclick="closeAdmin()" class="vote-btn" style="width: auto;">Stäng</button>
+                <h2>Live Results</h2>
+                <button onclick="closeAdmin()" class="vote-btn" style="width: auto;">Close</button>
             </div>
             <div id="results-list"></div>
         </div>
@@ -373,24 +373,24 @@
         });
 
         const countries = [
-            { id: "AL", name: "Albanien", flag: "🇦🇱" }, { id: "AM", name: "Armenien", flag: "🇦🇲" },
-            { id: "AU", name: "Australien", flag: "🇦🇺" }, { id: "AT", name: "Österrike", flag: "🇦🇹" },
-            { id: "AZ", name: "Azerbajdzjan", flag: "🇦🇿" }, { id: "BE", name: "Belgien", flag: "🇧🇪" },
-            { id: "BG", name: "Bulgarien", flag: "🇧🇬" }, { id: "HR", name: "Kroatien", flag: "🇭🇷" },
-            { id: "CY", name: "Cypern", flag: "🇨🇾" }, { id: "CZ", name: "Tjeckien", flag: "🇨🇿" },
-            { id: "DK", name: "Danmark", flag: "🇩🇰" }, { id: "EE", name: "Estland", flag: "🇪🇪" },
-            { id: "FI", name: "Finland", flag: "🇫🇮" }, { id: "FR", name: "Frankrike", flag: "🇫🇷" },
-            { id: "GE", name: "Georgien", flag: "🇬🇪" }, { id: "DE", name: "Tyskland", flag: "🇩🇪" },
-            { id: "GR", name: "Grekland", flag: "🇬🇷" }, { id: "IL", name: "Israel", flag: "🇮🇱" },
-            { id: "IT", name: "Italien", flag: "🇮🇹" }, { id: "LV", name: "Lettland", flag: "🇱🇻" },
-            { id: "LT", name: "Litauen", flag: "🇱🇹" }, { id: "LU", name: "Luxemburg", flag: "🇱🇺" },
-            { id: "MT", name: "Malta", flag: "🇲🇹" }, { id: "MD", name: "Moldavien", flag: "🇲🇩" },
-            { id: "ME", name: "Montenegro", flag: "🇲🇪" }, { id: "NO", name: "Norge", flag: "🇳🇴" },
-            { id: "PL", name: "Polen", flag: "🇵🇱" }, { id: "PT", name: "Portugal", flag: "🇵🇹" },
-            { id: "RO", name: "Rumänien", flag: "🇷🇴" }, { id: "SM", name: "San Marino", flag: "🇸🇲" },
-            { id: "RS", name: "Serbien", flag: "🇷🇸" }, { id: "SE", name: "Sverige", flag: "🇸🇪" },
-            { id: "CH", name: "Schweiz", flag: "🇨🇭" }, { id: "UA", name: "Ukraina", flag: "🇺🇦" },
-            { id: "GB", name: "Storbritannien", flag: "🇬🇧" }
+            { id: "AL", name: "Albania", flag: "🇦🇱" }, { id: "AM", name: "Armenia", flag: "🇦🇲" },
+            { id: "AU", name: "Australia", flag: "🇦🇺" }, { id: "AT", name: "Austria", flag: "🇦🇹" },
+            { id: "AZ", name: "Azerbaijan", flag: "🇦🇿" }, { id: "BE", name: "Belgium", flag: "🇧🇪" },
+            { id: "BG", name: "Bulgaria", flag: "🇧🇬" }, { id: "HR", name: "Croatia", flag: "🇭🇷" },
+            { id: "CY", name: "Cyprus", flag: "🇨🇾" }, { id: "CZ", name: "Czech Republic", flag: "🇨🇿" },
+            { id: "DK", name: "Denmark", flag: "🇩🇰" }, { id: "EE", name: "Estonia", flag: "🇪🇪" },
+            { id: "FI", name: "Finland", flag: "🇫🇮" }, { id: "FR", name: "France", flag: "🇫🇷" },
+            { id: "GE", name: "Georgia", flag: "🇬🇪" }, { id: "DE", name: "Germany", flag: "🇩🇪" },
+            { id: "GR", name: "Greece", flag: "🇬🇷" }, { id: "IL", name: "Israel", flag: "🇮🇱" },
+            { id: "IT", name: "Italy", flag: "🇮🇹" }, { id: "LV", name: "Latvia", flag: "🇱🇻" },
+            { id: "LT", name: "Lithuania", flag: "🇱🇹" }, { id: "LU", name: "Luxembourg", flag: "🇱🇺" },
+            { id: "MT", name: "Malta", flag: "🇲🇹" }, { id: "MD", name: "Moldova", flag: "🇲🇩" },
+            { id: "ME", name: "Montenegro", flag: "🇲🇪" }, { id: "NO", name: "Norway", flag: "🇳🇴" },
+            { id: "PL", name: "Poland", flag: "🇵🇱" }, { id: "PT", name: "Portugal", flag: "🇵🇹" },
+            { id: "RO", name: "Romania", flag: "🇷🇴" }, { id: "SM", name: "San Marino", flag: "🇸🇲" },
+            { id: "RS", name: "Serbia", flag: "🇷🇸" }, { id: "SE", name: "Sweden", flag: "🇸🇪" },
+            { id: "CH", name: "Switzerland", flag: "🇨🇭" }, { id: "UA", name: "Ukraine", flag: "🇺🇦" },
+            { id: "GB", name: "United Kingdom", flag: "🇬🇧" }
         ];
 
         let userName = localStorage.getItem('eurovision_name') || "";
@@ -398,7 +398,7 @@
         let myVotes = JSON.parse(localStorage.getItem('eurovision_votes')) || {};
         let selectedCountry = null;
 
-        // Räkna ut tillgängliga poäng baserat på sparade röster
+        // Calculate available points based on saved votes
         Object.values(myVotes).forEach(p => {
             availablePoints = availablePoints.filter(val => val !== p);
         });
@@ -412,9 +412,9 @@
         function restoreSession() {
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('voting-screen').style.display = 'block';
-            document.getElementById('welcome-msg').textContent = `Välkommen tillbaka, ${userName}!`;
+            document.getElementById('welcome-msg').textContent = `Welcome back, ${userName}!`;
             
-            // Uppdatera närvaro i Firebase
+            // Update presence in Firebase
             const userRef = push(ref(db, 'users'));
             set(userRef, userName);
             onDisconnect(userRef).remove();
@@ -426,18 +426,18 @@
         window.startVoting = function() {
             const input = document.getElementById('user-name');
             userName = input.value.trim();
-            if (userName.length < 2) return alert("Skriv ditt namn!");
+            if (userName.length < 2) return alert("Please enter your name!");
             
             localStorage.setItem('eurovision_name', userName);
             
-            // Spara användaren i Firebase och ta bort vid utloggning
+            // Save user to Firebase and remove on disconnect
             const userRef = push(ref(db, 'users'));
             set(userRef, userName);
             onDisconnect(userRef).remove();
 
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('voting-screen').style.display = 'block';
-            document.getElementById('welcome-msg').textContent = `Heja ${userName}!`;
+            document.getElementById('welcome-msg').textContent = `Go ${userName}!`;
             updatePointsHeader();
             window.renderCountries();
         };
@@ -452,7 +452,7 @@
                     <span class="points-badge" id="badge-${c.id}">${myVotes[c.id] || ''}p</span>
                     <span class="flag">${c.flag}</span>
                     <span class="country-name">${c.name}</span>
-                    ${myVotes[c.id] ? '' : `<button class="vote-btn">Ge poäng</button>`}
+                    ${myVotes[c.id] ? '' : `<button class="vote-btn">Give points</button>`}
                 `;
                 if (myVotes[c.id]) {
                     card.querySelector('.points-badge').style.display = 'block';
@@ -466,7 +466,7 @@
         window.openPoints = function(id) {
             selectedCountry = id;
             const country = countries.find(c => c.id === id);
-            document.getElementById('modal-title').textContent = `Hur många poäng till ${country.name}?`;
+            document.getElementById('modal-title').textContent = `How many points to ${country.name}?`;
             const pGrid = document.getElementById('points-grid');
             pGrid.innerHTML = '';
             [1, 2, 3, 4, 5, 6, 7, 8, 10, 12].forEach(p => {
@@ -487,7 +487,7 @@
 
         window.submitVote = function(p) {
             const cid = selectedCountry;
-            console.log(`Försöker rösta: ${p} poäng på ${cid}`);
+            console.log(`Trying to vote: ${p} points to ${cid}`);
             const voteRef = ref(db, 'votes/' + cid);
             runTransaction(voteRef, (curr) => (curr || 0) + p).then(() => {
                 myVotes[cid] = p;
@@ -496,13 +496,13 @@
                 window.closeOverlay();
                 window.renderCountries();
                 updatePointsHeader();
-                showToast(`Gav ${p} poäng till ${countries.find(c => c.id === cid).name}!`);
+                showToast(`Gave ${p} points to ${countries.find(c => c.id === cid).name}!`);
             }).catch(err => {
-                console.error("Firebase error vid röstning:", err);
+                console.error("Firebase error during voting:", err);
                 if (err.message.includes("permission_denied")) {
-                    alert("Åtkomst nekad! Du måste ändra 'Rules' i Firebase Console till public (read/write: true).");
+                    alert("Access denied! You must change 'Rules' in Firebase Console to public (read/write: true).");
                 } else {
-                    alert("Kunde inte spara röst: " + err.message);
+                    alert("Could not save vote: " + err.message);
                 }
             });
         }
@@ -510,27 +510,27 @@
         function updatePointsHeader() {
             const el = document.getElementById('points-left');
             if (availablePoints.length === 0) {
-                el.textContent = "Alla poäng utdelade!";
+                el.textContent = "All points assigned!";
                 el.style.color = "#4caf50";
             } else {
-                el.textContent = "Kvar att ge: " + availablePoints.join(", ");
+                el.textContent = "Points left: " + availablePoints.join(", ");
             }
         }
 
         window.openAdmin = () => {
-            const pass = prompt("Kod:");
+            const pass = prompt("Passcode:");
             if (pass === "stek1337") {
                 document.getElementById('admin-panel').style.display = 'block';
-                console.log("Admin öppnad, hämtar data...");
+                console.log("Admin opened, fetching data...");
                 onValue(ref(db, 'votes'), (snap) => {
                     const data = snap.val() || {};
-                    console.log("Data mottagen till admin:", data);
+                    console.log("Data received for admin:", data);
                     renderResults(data);
                 }, (err) => {
                     console.error("Admin onValue error:", err);
                 });
             } else if (pass !== null) {
-                alert("Fel kod!");
+                alert("Wrong passcode!");
             }
         };
 
@@ -542,7 +542,7 @@
             const sorted = countries.map(c => ({...c, score: votes[c.id] || 0})).sort((a,b) => b.score - a.score);
             
             if (sorted.every(s => s.score === 0)) {
-                list.innerHTML = '<p style="text-align:center; padding: 20px; opacity: 0.5;">Inga röster har kommit in än.</p>';
+                list.innerHTML = '<p style="text-align:center; padding: 20px; opacity: 0.5;">No votes received yet.</p>';
                 return;
             }
 
